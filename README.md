@@ -20,8 +20,10 @@ Or install it yourself as:
 
 ## Usage
 
+```ruby
 client = RolesManagementAPI.login("https://roles.installation.url/api", "Username", "API Key")
 client.connected?
+```
 
 ## Development
 
