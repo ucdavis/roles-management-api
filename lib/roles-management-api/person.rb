@@ -4,9 +4,17 @@ module RolesManagementAPI
 
     # Creates a new Person object from a JSON object
     def initialize(json)
-      self.id = json[:id]
-      self.loginid = json[:loginid]
-      self.name = json[:name]
+      @id = json[:id]
+      @loginid = json[:loginid]
+      @name = json[:name]
+    end
+
+    def as_json
+      {
+        id: @id,
+        loginid: @loginid,
+        name: @name
+      }
     end
   end
 end
