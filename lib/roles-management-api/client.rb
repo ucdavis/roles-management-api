@@ -15,9 +15,7 @@ module RolesManagementAPI
     end
 
     def connected?
-      request = create_request("validate")
-
-      response = @conn.request(request)
+      response = get_request("validate")
 
       if response.code != "200"
         puts "Error querying RM, response code was #{response.code}."
@@ -28,12 +26,19 @@ module RolesManagementAPI
     end
 
     def find_role_by_id(role_id)
+      response = get_request("roles/" + role_id.to_s + ".json")
 
+      if response.code != "200"
+        puts "Error querying RM, response code was #{response.code}."
+        return nil
+      end
+
+      return Role.new(role_id, response)
     end
 
     private
 
-    def create_request(url)
+    def get_request(url)
       request = Net::HTTP::Get.new(@uri.request_uri + "/" + url)
 
       # RM requires we specify which version of the API we want
@@ -41,7 +46,7 @@ module RolesManagementAPI
       # RM requires we provide the username and API key via HTTP Basic Auth
       request.basic_auth(@username, @api_key)
 
-      return request
+      return @conn.request(request)
     end
   end
 end

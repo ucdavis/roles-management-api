@@ -1,4 +1,6 @@
 require "roles-management-api/version"
+require "roles-management-api/person"
+require "roles-management-api/role"
 require "roles-management-api/client"
 
 require "json"
