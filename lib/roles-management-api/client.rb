@@ -81,7 +81,9 @@ module RolesManagementAPI
         return nil
       end
 
-      return Person.new(response)
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      return Person.new(json)
     end
 
     private
