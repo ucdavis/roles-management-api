@@ -47,6 +47,10 @@ module RolesManagementAPI
       @assignments[idx]
     end
 
+    def each &block
+      @assignments.each &block
+    end
+
     def length
       @assignments.length
     end
