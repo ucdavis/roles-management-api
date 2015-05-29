@@ -52,6 +52,18 @@ module RolesManagementAPI
     end
 
     # Returns a Person object for the given loginid or nil on error / not found
+    def find_person_by_id(id)
+      response = get_request("people/" + id.to_s + ".json")
+
+      if response.code != "200"
+        puts "Error querying RM, response code was #{response.code}."
+        return nil
+      end
+
+      return Person.new(response)
+    end
+
+    # Returns a Person object for the given loginid or nil on error / not found
     def find_person_by_loginid(loginid)
       response = get_request("people/" + loginid + ".json")
 
