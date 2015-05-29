@@ -11,7 +11,7 @@ module RolesManagementAPI
       @uri = URI.parse(url)
 
       @conn = Net::HTTP.new(@uri.host, @uri.port)
-      @conn.use_ssl = true
+      @conn.use_ssl = true if @uri.scheme == "https"
 
       @username = username
       @api_key = api_key
@@ -31,15 +31,15 @@ module RolesManagementAPI
 
     def save(object)
       if object.is_a? RolesManagementAPI::Role
-        puts object.as_json
-        return true
+        response = put_request("roles/" + object.id.to_s + ".json", object.as_json)
+        return response
       else
-        STDERR.puts "Cannot save object: type not understood."
+        STDERR.puts "Cannot save object: type '#{object.class}' not supported."
         return false
       end
     end
 
-    # Returns a Role object for the given role_id or nil on error
+    # Returns a Role object for the given role_id or nil on error / not found
     def find_role_by_id(role_id)
       response = get_request("roles/" + role_id.to_s + ".json")
 
@@ -49,6 +49,18 @@ module RolesManagementAPI
       end
 
       return Role.new(role_id, response)
+    end
+
+    # Returns a Person object for the given loginid or nil on error / not found
+    def find_person_by_loginid(loginid)
+      response = get_request("people/" + loginid + ".json")
+
+      if response.code != "200"
+        puts "Error querying RM, response code was #{response.code}."
+        return nil
+      end
+
+      return Person.new(response)
     end
 
     private
@@ -62,11 +74,11 @@ module RolesManagementAPI
       end
 
       # Performs a HTTP POST using the configured API endpoint and key
-      def post_request(url, data)
-        request = Net::HTTP::Post.new(@uri.request_uri + "/" + url)
+      def put_request(url, data)
+        request = Net::HTTP::Put.new(@uri.request_uri + "/" + url, initheader = {'Content-Type' =>'application/json'})
         request = sign_request(request)
 
-        request.set_form_data(data)
+        request.body = data.to_json
 
         return @conn.request(request)
       end

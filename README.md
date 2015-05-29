@@ -23,6 +23,20 @@ Or install it yourself as:
 ```ruby
 client = RolesManagementAPI.login("https://roles.installation.url/api", "Username", "API Key")
 client.connected?
+
+r = client.find_role_by_id(1234)
+puts "Role has #{r.assignments.length} assignments."
+
+p = client.find_person_by_loginid('somebody')
+puts "'somebody' user has full name of #{p.name}"
+
+puts "Removing first assignment from role ..."
+r.assignments.delete(r.assignments[0])
+client.save(r)
+
+puts "Adding 'somebody' to role ..."
+r.assignments << p
+client.save(r)
 ```
 
 ## Development
