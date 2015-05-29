@@ -30,7 +30,7 @@ puts "Role has #{r.assignments.length} assignments."
 p = client.find_person_by_loginid('somebody')
 puts "'somebody' user has full name of #{p.name}"
 
-# You can also do: p = client.find_person_by_id(123) if you know the ID
+# You can also do: p = client.find_entity_by_id(123) if you know the ID
 
 puts "Removing first assignment from role ..."
 r.assignments.delete(r.assignments[0])

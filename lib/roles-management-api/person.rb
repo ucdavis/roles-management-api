@@ -3,9 +3,7 @@ module RolesManagementAPI
     attr_accessor :id, :loginid, :name
 
     # Creates a new Person object from a JSON object
-    def initialize(response)
-      json = JSON.parse(response.body, symbolize_names: true)
-
+    def initialize(json)
       @id = json[:id]
       @loginid = json[:loginid]
       @name = json[:name]

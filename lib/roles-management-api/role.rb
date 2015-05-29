@@ -1,11 +1,9 @@
 module RolesManagementAPI
   class Role
-    attr_accessor :id, :application_id, :description, :name, :token, :assignments
+    attr_accessor :id, :application_id, :description, :name, :token, :assignments, :members
 
     # Creates a new Role object from a NET/HTTP response (see client.rb)
-    def initialize(role_id, response)
-      json = JSON.parse(response.body, symbolize_names: true)
-
+    def initialize(role_id, json)
       @id = role_id
       @application_id = json[:application_id]
       @description = json[:description]
@@ -15,6 +13,11 @@ module RolesManagementAPI
       @assignments = RoleAssignmentArray.new
       json[:role_assignments_attributes].each do |assignment_json|
         @assignments << RoleAssignment.new(assignment_json)
+      end
+
+      @members = []
+      json[:members].each do |member|
+        @members << Person.new(member)
       end
     end
 

@@ -44,23 +44,32 @@ module RolesManagementAPI
       response = get_request("roles/" + role_id.to_s + ".json")
 
       if response.code != "200"
-        puts "Error querying RM, response code was #{response.code}."
+        STDERR.puts "Error querying RM, response code was #{response.code}."
         return nil
       end
 
-      return Role.new(role_id, response)
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      return Role.new(role_id, json)
     end
 
     # Returns a Person object for the given loginid or nil on error / not found
-    def find_person_by_id(id)
-      response = get_request("people/" + id.to_s + ".json")
+    def find_entity_by_id(id)
+      response = get_request("entities/" + id.to_s + ".json")
 
       if response.code != "200"
-        puts "Error querying RM, response code was #{response.code}."
+        STDERR.puts "Error querying RM, response code was #{response.code}."
         return nil
       end
 
-      return Person.new(response)
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      if json[:type] == "Person"
+        return Person.new(json)
+      else
+        STDERR.puts "Did not understand entity type returned by RM."
+        return nil
+      end
     end
 
     # Returns a Person object for the given loginid or nil on error / not found
