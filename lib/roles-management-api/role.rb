@@ -10,7 +10,7 @@ module RolesManagementAPI
       @name = json[:name]
       @token = json[:token]
 
-      @assignments = RoleAssignmentArray.new
+      @assignments = RoleAssignmentArray.new(role_id)
       json[:role_assignments_attributes].each do |assignment_json|
         @assignments << RoleAssignment.new(assignment_json)
       end
@@ -23,7 +23,9 @@ module RolesManagementAPI
 
     def as_json
       {
-        role_assignments_attributes: @assignments.as_json
+        role: {
+          role_assignments_attributes: @assignments.as_json
+        }
       }
     end
   end
@@ -32,15 +34,16 @@ module RolesManagementAPI
   # assignment list. Its primary purpose is to add the Rails-required "_destroy: true"
   # attribute in its as_json for any assignment which has been removed.
   class RoleAssignmentArray
-    def initialize
+    def initialize(role_id)
       @assignments = []
+      @role_id = role_id
     end
 
     def <<(assignment)
       raise "You may only add objects of type 'RoleAssignment' or 'Person'" unless assignment.is_a?(RoleAssignment) or assignment.is_a?(Person)
 
       if assignment.is_a?(Person)
-        @assignments << RoleAssignment.new({id: nil, entity_id: assignment.id, role_id: nil})
+        @assignments << RoleAssignment.new({entity_id: assignment.id, role_id: @role_id})
       else
         @assignments << assignment
       end
