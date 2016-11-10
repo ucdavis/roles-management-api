@@ -21,12 +21,7 @@ module RolesManagementAPI
     def connected?
       response = get_request("validate")
 
-      if response.code != "200"
-        puts "Error querying RM, response code was #{response.code}."
-        return false
-      end
-
-      return true
+      return response.code == "200"
     end
 
     def save(object)
@@ -43,10 +38,7 @@ module RolesManagementAPI
     def find_role_by_id(role_id)
       response = get_request("roles/" + role_id.to_s + ".json")
 
-      if response.code != "200"
-        STDERR.puts "Error querying RM, response code was #{response.code}."
-        return nil
-      end
+      return nil unless response.code == "200"
 
       json = JSON.parse(response.body, symbolize_names: true)
 
@@ -57,10 +49,7 @@ module RolesManagementAPI
     def find_entity_by_id(id)
       response = get_request("entities/" + id.to_s + ".json")
 
-      if response.code != "200"
-        STDERR.puts "Error querying RM, response code was #{response.code}."
-        return nil
-      end
+      return nil unless response.code == "200"
 
       json = JSON.parse(response.body, symbolize_names: true)
 
@@ -76,10 +65,7 @@ module RolesManagementAPI
     def find_person_by_loginid(loginid)
       response = get_request("people/" + loginid + ".json")
 
-      if response.code != "200"
-        puts "Error querying RM, response code was #{response.code}."
-        return nil
-      end
+      return nil unless response.code == "200"
 
       json = JSON.parse(response.body, symbolize_names: true)
 
@@ -90,10 +76,15 @@ module RolesManagementAPI
 
       # Performs a HTTP GET using the configured API endpoint and key
       def get_request(url)
-        request = Net::HTTP::Get.new(@uri.request_uri + "/" + url)
+        request_url = @uri.request_uri + "/" + url
+        request = Net::HTTP::Get.new(request_url)
         request = sign_request(request)
 
-        return @conn.request(request)
+        response = @conn.request(request)
+
+        STDERR.puts "Error querying RM, response code was #{response.code} for URL #{request_url}." unless response.code == "200"
+
+        return response
       end
 
       # Performs a HTTP POST using the configured API endpoint and key
