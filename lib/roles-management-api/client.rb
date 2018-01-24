@@ -36,13 +36,24 @@ module RolesManagementAPI
 
     # Returns a Role object for the given role_id or nil on error / not found
     def find_role_by_id(role_id)
-      response = get_request("roles/" + role_id.to_s + ".json")
+      response = get_request("roles/#{role_id}.json")
 
       return nil unless response.code == "200"
 
       json = JSON.parse(response.body, symbolize_names: true)
 
       return Role.new(role_id, json)
+    end
+
+    # Returns an Application object for the given application_id or nil on error / not found
+    def find_application_by_id(application_id)
+      response = get_request("applications/#{application_id}.json")
+
+      return nil unless response.code == "200"
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      return Application.new(application_id, json)
     end
 
     # Returns a Person object for the given loginid or nil on error / not found
