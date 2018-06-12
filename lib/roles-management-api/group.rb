@@ -1,16 +1,19 @@
 module RolesManagementAPI
   class Group
-    attr_accessor :id, :name, :members, :rules
+    attr_accessor :id, :name, :members, :rules, :owners
 
     # Creates a new Group object from a JSON object
-    def initialize(json)
-      @id = json[:id]
-      @name = json[:name]
-      @members = json[:members]
+    def initialize(json = {})
+      @id = json[:id] || nil
+      @name = json[:name] || nil
+      @members = json[:members] || []
+      @owners = json[:owners] || []
 
-      @rules = GroupRuleArray.new(@id)
-      json[:rules].each do |rule_json|
-        @rules << GroupRule.new(rule_json)
+      @rules = GroupRuleArray.new
+      if json[:rules]
+        json[:rules].each do |rule_json|
+          @rules << GroupRule.new(rule_json)
+        end
       end
     end
 
@@ -29,9 +32,8 @@ module RolesManagementAPI
   # rule list. Its primary purpose is to add the Rails-required "_destroy: true"
   # attribute in its as_json for any rule which has been removed.
   class GroupRuleArray
-    def initialize(group_id)
+    def initialize
       @rules = []
-      @group_id = group_id
     end
 
     def <<(rule)
