@@ -1,5 +1,7 @@
 require "roles-management-api/version"
 require "roles-management-api/person"
+require "roles-management-api/group_rule"
+require "roles-management-api/group"
 require "roles-management-api/role_assignment"
 require "roles-management-api/role"
 require "roles-management-api/application"

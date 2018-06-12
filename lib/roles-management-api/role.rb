@@ -65,7 +65,7 @@ module RolesManagementAPI
       raise "You may only delete objects of type 'RoleAssignment'" unless member.is_a?(RoleAssignment)
 
       @assignments.each do |assignment|
-        if (assignment.id == member.id) and (member.id != nil)
+        if (assignment.id == member.id) && (member.id != nil)
           assignment.destroy = true
           return true
         end

@@ -2,7 +2,7 @@ module RolesManagementAPI
   class RoleAssignment
     attr_accessor :id, :entity_id, :role_id, :destroy
 
-    # Creates a new Person object from a JSON object
+    # Creates a new RoleAssignment object from a JSON object
     def initialize(json)
       @id = json[:id]
       @entity_id = json[:entity_id]

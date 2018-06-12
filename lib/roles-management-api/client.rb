@@ -28,6 +28,9 @@ module RolesManagementAPI
       if object.is_a? RolesManagementAPI::Role
         response = put_request("roles/" + object.id.to_s + ".json", object.as_json)
         return response
+      elsif object.is_a? RolesManagementAPI::Group
+        response = put_request("groups/" + object.id.to_s + ".json", object.as_json)
+        return response
       else
         STDERR.puts "Cannot save object: type '#{object.class}' not supported."
         return false
@@ -81,6 +84,17 @@ module RolesManagementAPI
       json = JSON.parse(response.body, symbolize_names: true)
 
       return Person.new(json)
+    end
+
+    # Returns a Group object by ID or nil on error / not found
+    def find_group_by_id(id)
+      response = get_request("groups/" + id.to_s + ".json")
+
+      return nil unless response.code == "200"
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      return Group.new(json)
     end
 
     private
