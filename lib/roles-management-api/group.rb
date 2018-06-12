@@ -6,10 +6,9 @@ module RolesManagementAPI
     def initialize(json)
       @id = json[:id]
       @name = json[:name]
+      @members = json[:members]
 
       @rules = GroupRuleArray.new(@id)
-      require 'pp'
-      pp json
       json[:rules].each do |rule_json|
         @rules << GroupRule.new(rule_json)
       end
